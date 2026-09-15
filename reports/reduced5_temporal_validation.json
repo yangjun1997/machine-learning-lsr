@@ -1,0 +1,63 @@
+{
+  "analysis_type": "locked internal temporal validation",
+  "model": "hist_gradient_boosting",
+  "feature_schema": {
+    "name": "reduced5",
+    "columns": [
+      "duration",
+      "botox",
+      "acupuncture",
+      "zyg_lsr",
+      "man_lsr"
+    ],
+    "numeric": [
+      "duration"
+    ],
+    "categorical": [
+      "botox",
+      "acupuncture",
+      "zyg_lsr",
+      "man_lsr"
+    ],
+    "prediction_time": "intraoperative"
+  },
+  "rows": 104,
+  "events": 9,
+  "bootstrap_replicates": 2000,
+  "point_estimates": {
+    "brier": 0.08954269190405371,
+    "log_loss": 0.2824625117183764,
+    "auroc": 0.8391812865497076,
+    "auprc": 0.30371798749747936,
+    "calibration_intercept": -1.1050917362539276,
+    "calibration_slope": 0.5389676062733323
+  },
+  "point_estimate_ci": {
+    "auroc": [
+      0.71107421875,
+      0.9367050788483233
+    ],
+    "auprc": [
+      0.14108541153530377,
+      0.626126164593341
+    ],
+    "brier": [
+      0.04964076433934498,
+      0.1344618069311706
+    ],
+    "log_loss": [
+      0.16212267322955534,
+      0.4188546516724025
+    ],
+    "calibration_intercept": [
+      -2.2162444804260737,
+      -0.11916977551727344
+    ],
+    "calibration_slope": [
+      0.2705011711938495,
+      0.9552803368011826
+    ]
+  },
+  "validation_dataset_sha256": "dcaa52b1f295fad16749c7ede843b96c741f0c911b6838d4db568a4d82a4921f",
+  "note": "Group 2 was evaluated once after model freezing; no Group 2 tuning or recalibration was performed."
+}
