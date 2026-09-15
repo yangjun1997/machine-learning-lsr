@@ -1,0 +1,4 @@
+prediction_time: intraoperative
+numeric: [age, duration, bmi, kps]
+categorical: [sex, side, hypertension, diabetes, botox, acupuncture, zyg_lsr, man_lsr]
+combo: lsr_combo

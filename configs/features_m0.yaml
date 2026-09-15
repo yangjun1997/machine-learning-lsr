@@ -1,0 +1,3 @@
+prediction_time: preoperative
+numeric: [age, duration, bmi, kps]
+categorical: [sex, side, hypertension, diabetes, botox, acupuncture]

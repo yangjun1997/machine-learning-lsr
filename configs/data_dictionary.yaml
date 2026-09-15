@@ -1,0 +1,28 @@
+source: datas/580-analysis.xlsx
+expected_rows: 580
+expected_columns: 24
+fields:
+  group: 来源
+  admission_date: 入院时间
+  hospital_number: 住院号
+  outcome: 一年预后痉挛1不痉挛0
+  sex: 性别（男=1，女=0）
+  age: 年龄（岁）
+  side: 患侧（左=1，右=2）
+  duration: 病程（年）
+  hypertension: 高血压（有=1，无=0）
+  diabetes: 糖尿病（有=1，无=0）
+  incision: 切口类型（1类或者2类）
+  blood_loss: 术中出血量（ml）
+  day7_spasm: 术后七天（痉挛=1，不痉挛=0）
+  zyg_lsr: 3颧支（引出且消失=1，引出未消失=3，未引出=2）
+  man_lsr: 3下颌是否消失（引出且消失=1，引出未消失=3，未引出=2）
+  botox: 肉毒素（有=1，无=0）
+  acupuncture: 针灸（有=1，无=0）
+  bmi: BMI
+  kps: 入院时KPS评分
+  length_of_stay: 住院时间
+  va: 椎动脉
+  pica: 小脑后下动脉
+  aica: 小脑前下动脉
+  other_vessel: 其他动脉

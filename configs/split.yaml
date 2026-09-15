@@ -1,0 +1,7 @@
+admission_date_field: admission_date
+dev_end: "2022-06-30"
+washout_start: "2022-07-01"
+washout_end: "2022-08-31"
+validation_start: "2022-09-01"
+expected_group1: 476
+expected_group2: 104
