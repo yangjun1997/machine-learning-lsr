@@ -28,7 +28,7 @@ def main() -> None:
     st.warning(DISCLAIMER)
 
     try:
-        model, manifest = _load_artifacts()
+        model, _ = _load_artifacts()
     except Exception:
         st.error("The model service is currently unavailable: the frozen model or validation report could not be loaded.")
         st.stop()
@@ -59,10 +59,6 @@ def main() -> None:
             return
 
         st.metric("Predicted probability", f"{probability:.1%}")
-        st.caption(
-            f"Model: {manifest['selected_model']}; locked internal temporal validation on Group 2: "
-            f"n={manifest['validation_rows']}, events={manifest['validation_events']}."
-        )
         st.info(DISCLAIMER)
 
 

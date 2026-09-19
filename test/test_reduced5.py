@@ -91,4 +91,4 @@ def test_streamlit_research_page_has_five_inputs_and_returns_probability():
     assert len(app.metric) == 1
     assert len(app.info) == 1
     assert app.metric[0].label == "Predicted probability"
-    assert app.caption[-1].value.startswith("Model: hist_gradient_boosting")
+    assert len(app.caption) == 1
