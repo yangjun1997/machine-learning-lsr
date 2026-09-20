@@ -12,6 +12,7 @@ wheels/
 # Local agent/config files and generated analysis outputs
 .codex/
 .claude/
+openspec/
 results/
 datas
 data/raw/
