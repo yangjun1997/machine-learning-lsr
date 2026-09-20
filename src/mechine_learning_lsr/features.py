@@ -14,11 +14,10 @@ M0_CATEGORICAL = ["sex", "side", "hypertension", "diabetes", "botox", "acupunctu
 M1_NUMERIC = M0_NUMERIC
 M1_CATEGORICAL = M0_CATEGORICAL + ["zyg_lsr", "man_lsr"]
 M2_CATEGORICAL = M1_CATEGORICAL + ["day7_spasm"]
-REDUCED5_NUMERIC = ["duration"]
-REDUCED5_CATEGORICAL = ["botox", "acupuncture", "zyg_lsr", "man_lsr"]
+REDUCED5_NUMERIC = ["age", "duration"]
+REDUCED5_CATEGORICAL = ["acupuncture", "zyg_lsr", "man_lsr"]
 REDUCED5_COLUMNS = REDUCED5_NUMERIC + REDUCED5_CATEGORICAL
 REDUCED5_ALLOWED = {
-    "botox": (0, 1),
     "acupuncture": (0, 1),
     "zyg_lsr": (1, 2, 3),
     "man_lsr": (1, 2, 3),
@@ -69,13 +68,15 @@ def get_features(df: pd.DataFrame, name: str = "m1", representation: str = "inde
 def validate_reduced5(values: Mapping[str, object]) -> list[str]:
     """Return validation errors for the public five-variable prediction contract."""
     errors: list[str] = []
-    duration = values.get("duration")
-    try:
-        valid_duration = duration is not None and math.isfinite(float(duration)) and float(duration) >= 0
-    except (TypeError, ValueError):
-        valid_duration = False
-    if not valid_duration:
-        errors.append("duration must be a finite non-negative number")
+    for name in REDUCED5_NUMERIC:
+        try:
+            value = float(values[name])
+            valid = math.isfinite(value) and (18 <= value <= 120 if name == "age" else value >= 0)
+        except (KeyError, TypeError, ValueError):
+            valid = False
+        if not valid:
+            message = "a finite number between 18 and 120" if name == "age" else "a finite non-negative number"
+            errors.append(f"{name} must be {message}")
     for name, allowed in REDUCED5_ALLOWED.items():
         if values.get(name) not in allowed:
             errors.append(f"{name} must be one of {allowed}")
@@ -87,7 +88,9 @@ def build_reduced5_frame(values: Mapping[str, object]) -> pd.DataFrame:
     errors = validate_reduced5(values)
     if errors:
         raise ValueError("; ".join(errors))
+    numeric = {column: float(values[column]) for column in REDUCED5_NUMERIC}
+    categorical = {column: values[column] for column in REDUCED5_CATEGORICAL}
     return pd.DataFrame(
-        [{"duration": float(values["duration"]), **{column: values[column] for column in REDUCED5_CATEGORICAL}}],
+        [{**numeric, **categorical}],
         columns=REDUCED5_COLUMNS,
     )

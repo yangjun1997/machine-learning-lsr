@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from sklearn.ensemble import GradientBoostingClassifier
 from streamlit.testing.v1 import AppTest
 
 from mechine_learning_lsr.data import load_workbook, locked_split, sha256
@@ -19,8 +20,10 @@ REPORT = Path("reports/reduced5_temporal_validation.json")
 
 
 def test_reduced5_schema_validation_and_probability():
-    values = {"duration": 3.0, "botox": 0, "acupuncture": 1, "zyg_lsr": 1, "man_lsr": 3}
+    values = {"age": 52, "duration": 3.0, "acupuncture": 1, "zyg_lsr": 1, "man_lsr": 3}
     assert validate_reduced5(values) == []
+    assert validate_reduced5({**values, "age": 17})
+    assert validate_reduced5({**values, "age": 121})
     assert validate_reduced5({**values, "man_lsr": 4})
     assert list(build_reduced5_frame(values).columns) == REDUCED5_COLUMNS
     assert build_reduced5_frame({**values, "duration": "3"}).loc[0, "duration"] == 3.0
@@ -32,10 +35,28 @@ def test_reduced5_artifact_schema_categories_and_hash():
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     model, _ = load_reduced5_model()
     encoder = model.named_steps["preprocess"].named_transformers_["cat"].named_steps["onehot"]
-    assert REDUCED5_COLUMNS == ["duration", "botox", "acupuncture", "zyg_lsr", "man_lsr"]
-    assert [values.tolist() for values in encoder.categories_] == [[0, 1], [0, 1], [1, 2, 3], [1, 2, 3]]
+    assert REDUCED5_COLUMNS == ["age", "duration", "acupuncture", "zyg_lsr", "man_lsr"]
+    assert [values.tolist() for values in encoder.categories_] == [[0, 1], [1, 2, 3], [1, 2, 3]]
+    estimator = model.named_steps["model"]
+    assert isinstance(estimator, GradientBoostingClassifier)
+    expected_parameters = {
+        "n_estimators": 100,
+        "learning_rate": 0.03,
+        "max_depth": 2,
+        "min_samples_leaf": 10,
+        "random_state": 20260904,
+    }
+    parameters = estimator.get_params()
+    assert {name: parameters[name] for name in expected_parameters} == expected_parameters
+    assert manifest["selected_model"] == "gradient_boosting"
     assert manifest["model_sha256"] == sha256("artifacts/reduced5_model.joblib")
     assert manifest["feature_schema"]["columns"] == REDUCED5_COLUMNS
+
+
+def test_reduced5_features_match_group1_shap_top_five():
+    ranking = pd.read_csv("reports/shap_variable_importance.csv").sort_values("rank")
+    assert set(REDUCED5_COLUMNS) == set(ranking.head(5)["variable"])
+    assert "botox" not in REDUCED5_COLUMNS
 
 
 def test_reduced5_artifacts_are_validation_locked_and_separate():
@@ -46,7 +67,7 @@ def test_reduced5_artifacts_are_validation_locked_and_separate():
     assert manifest["validation_dataset_sha256"] == sha256("datas/580-analysis.xlsx")
     assert report["rows"] == 104
     assert report["events"] == 9
-    assert report["note"].startswith("Group 2 was evaluated once")
+    assert "superseded web prototype" in report["note"]
 
 
 def test_reduced5_group2_is_temporally_isolated():
@@ -62,7 +83,7 @@ def test_reduced5_group2_is_temporally_isolated():
 
 
 def test_reduced5_invalid_input_and_unavailable_artifact(monkeypatch, tmp_path):
-    values = {"duration": 3.0, "botox": 0, "acupuncture": 1, "zyg_lsr": 1, "man_lsr": 3}
+    values = {"age": 52, "duration": 3.0, "acupuncture": 1, "zyg_lsr": 1, "man_lsr": 3}
     with pytest.raises(ValueError, match="man_lsr"):
         predict_reduced5({**values, "man_lsr": 9})
 
@@ -80,8 +101,10 @@ def test_streamlit_research_page_has_five_inputs_and_returns_probability():
     assert app.title[0].value == "One-Year Postoperative Spasm Probability"
     assert app.caption[0].value == "Five-variable Streamlit research prototype"
     assert app.warning[0].value.startswith("Research prototype only.")
-    assert len(app.number_input) == 1
-    assert len(app.selectbox) == 4
+    assert len(app.number_input) == 2
+    assert len(app.selectbox) == 3
+    assert app.number_input[0].label == "Age (years)"
+    assert all(widget.label != "Prior botulinum toxin treatment" for widget in app.selectbox)
     assert len(app.warning) == 1
     assert not app.text_input
     assert not app.file_uploader

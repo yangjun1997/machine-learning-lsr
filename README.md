@@ -1,4 +1,4 @@
-# mechine-learning-LSR
+# machine-learning-LSR
 
 The repository contains the frozen temporal-validation analysis and its publication package.
 
@@ -32,8 +32,9 @@ uv run python -m mechine_learning_lsr.word_export
 ## Five-variable research prediction prototype
 
 The public prototype uses a separately trained `reduced5` model with only
-disease duration, prior botulinum toxin treatment, acupuncture, zygomatic-branch
-LSR, and mandibular-branch LSR. It does not reuse the 12-variable model.
+age, disease duration, prior acupuncture, zygomatic-branch LSR, and
+mandibular-branch LSR: the five highest-ranked original variables in the Group 1
+SHAP analysis. It does not reuse the fitted 12-variable model.
 
 Regenerate the reduced model and its locked Group 2 evaluation:
 
@@ -42,15 +43,16 @@ uv run python -m mechine_learning_lsr.reduced5_train
 uv run python -m mechine_learning_lsr.reduced5_evaluate
 ```
 
-The frozen reduced model is `hist_gradient_boosting` and uses exactly five
-inputs: duration, prior botulinum toxin, acupuncture, zygomatic-branch LSR,
-and mandibular-branch LSR. Locked internal temporal validation on Group 2 had
-104 records and 9 events: AUROC 0.839, AUPRC 0.304, Brier score 0.090, and
-log-loss 0.282 (95% bootstrap intervals are in
-`reports/reduced5_temporal_validation.json`). Group 2 was evaluated once after
-freezing; it was not used for selection, tuning, or recalibration. These
-results are internal validation only and do not establish clinical utility or
-equivalence to the existing 12-variable model.
+The reduced model uses the same fixed `gradient_boosting` specification as the
+12-variable index model; candidate algorithms were not re-compared after the
+feature reduction. Internal temporal validation of the corrected model on Group
+2 had 104 records and 9 events: AUROC 0.895, AUPRC 0.342, Brier score 0.081,
+and log-loss 0.251 (95% bootstrap intervals are in
+`reports/reduced5_temporal_validation.json`). Group 2 was not used for fitting,
+tuning, feature selection, threshold selection, or recalibration. However, it
+had already been used to evaluate the superseded web prototype, so this result
+must not be described as first-use untouched or external validation. It does
+not establish clinical utility or equivalence to the 12-variable model.
 
 Run the Streamlit app locally:
 
@@ -73,19 +75,28 @@ Provider-level access logs may still exist outside this repository; the public
 prototype is therefore for anonymous research inputs only. Real patient data
 require an authenticated institutional deployment.
 
-Verification record (2026-09-15):
+The repository is public at
+<https://github.com/yangjun1997/machine-learning-lsr>. The web-based research
+calculator is publicly accessible at
+<https://hfs-mvd-risk-calculator.streamlit.app/>.
+
+Generate the completed TRIPOD+AI supplementary checklist and update the
+manuscript's implementation and availability statements with:
+
+```powershell
+uv run python -m mechine_learning_lsr.tripod_checklist
+```
+
+Verification record (2026-09-20):
 
 ```text
 uv run python -m mechine_learning_lsr.reduced5_train
-selected_model: hist_gradient_boosting
+selected_model: gradient_boosting
 development_rows: 476; development_events: 58; validation_locked: false
-model_sha256: 897f2d98f49eceddaf664ea599055dda0b7279d10b7182ae5021c5651c469e61
+model_sha256: 902f0d7e20451b356d6fe57dde79f8bf17d210223ca9fd1af15523c4d8521ee4
 
 uv run python -m mechine_learning_lsr.reduced5_evaluate
 rows: 104; events: 9
-AUROC: 0.839181; AUPRC: 0.303718; Brier: 0.089543; log-loss: 0.282463
+AUROC: 0.894737; AUPRC: 0.342095; Brier: 0.080657; log-loss: 0.251242
 validation_locked: true
-
-uv run python -m pytest
-19 passed, 2 warnings in 8.96s
 ```

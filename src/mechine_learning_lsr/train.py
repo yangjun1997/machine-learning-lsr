@@ -20,13 +20,15 @@ from .metrics import bootstrap_interval
 OPTIONAL_MODEL_NAMES = {"xgboost", "lightgbm", "catboost"}
 
 
-def nested_development(X, y, feature_set, seed=20260904, include_optional=True):
+def nested_development(X, y, feature_set, seed=20260904, include_optional=True, candidate_names=None):
     outer = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
     results = []
     oof_by_model = {}
     candidate_pool = candidates(feature_set.numeric, feature_set.categorical, seed)
     if not include_optional:
         candidate_pool = [candidate for candidate in candidate_pool if candidate.name not in OPTIONAL_MODEL_NAMES]
+    if candidate_names is not None:
+        candidate_pool = [candidate for candidate in candidate_pool if candidate.name in candidate_names]
     for candidate in candidate_pool:
         if candidate.status != "available":
             results.append({"model": candidate.name, "status": candidate.status, "note": candidate.note})

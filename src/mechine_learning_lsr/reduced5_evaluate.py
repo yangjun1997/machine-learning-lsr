@@ -52,7 +52,7 @@ def evaluate_reduced5() -> dict:
     y_array = np.asarray(y, dtype=int)
     point_estimates = {**classification_metrics(y_array, probability), **calibration_metrics(y_array, probability)}
     result = {
-        "analysis_type": "locked internal temporal validation",
+        "analysis_type": "internal temporal validation of the corrected model; not first-use untouched validation",
         "model": manifest["selected_model"],
         "feature_schema": manifest["feature_schema"],
         "rows": len(y_array),
@@ -61,7 +61,7 @@ def evaluate_reduced5() -> dict:
         "point_estimates": point_estimates,
         "point_estimate_ci": _metric_intervals(y_array, probability),
         "validation_dataset_sha256": sha256(SOURCE),
-        "note": "Group 2 was evaluated once after model freezing; no Group 2 tuning or recalibration was performed.",
+        "note": "The corrected model was frozen before this evaluation, and no Group 2 fitting, tuning, feature selection, threshold selection, or recalibration was performed. However, Group 2 had already been used to evaluate the superseded web prototype, so this is not a first-use untouched validation exercise.",
     }
     VALIDATION_REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     VALIDATION_REPORT_PATH.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -70,6 +70,7 @@ def evaluate_reduced5() -> dict:
         "validation_dataset_sha256": sha256(SOURCE),
         "validation_rows": len(y_array),
         "validation_events": int(y_array.sum()),
+        "group2_reuse_disclosure": "Group 2 had already been used to evaluate the superseded web prototype before this corrected model was frozen.",
     })
     MANIFEST_PATH.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     return result

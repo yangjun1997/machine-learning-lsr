@@ -1,20 +1,20 @@
 {
-  "analysis_type": "locked internal temporal validation",
-  "model": "hist_gradient_boosting",
+  "analysis_type": "internal temporal validation of the corrected model; not first-use untouched validation",
+  "model": "gradient_boosting",
   "feature_schema": {
     "name": "reduced5",
     "columns": [
+      "age",
       "duration",
-      "botox",
       "acupuncture",
       "zyg_lsr",
       "man_lsr"
     ],
     "numeric": [
+      "age",
       "duration"
     ],
     "categorical": [
-      "botox",
       "acupuncture",
       "zyg_lsr",
       "man_lsr"
@@ -25,39 +25,39 @@
   "events": 9,
   "bootstrap_replicates": 2000,
   "point_estimates": {
-    "brier": 0.08954269190405371,
-    "log_loss": 0.2824625117183764,
-    "auroc": 0.8391812865497076,
-    "auprc": 0.30371798749747936,
-    "calibration_intercept": -1.1050917362539276,
-    "calibration_slope": 0.5389676062733323
+    "brier": 0.08065650366475416,
+    "log_loss": 0.25124177935296677,
+    "auroc": 0.8947368421052632,
+    "auprc": 0.34209464381565835,
+    "calibration_intercept": -0.9970579753605413,
+    "calibration_slope": 0.6836691847454779
   },
   "point_estimate_ci": {
     "auroc": [
-      0.71107421875,
-      0.9367050788483233
+      0.8230133928571428,
+      0.9547925531914894
     ],
     "auprc": [
-      0.14108541153530377,
-      0.626126164593341
+      0.17575689062936062,
+      0.6671450695926617
     ],
     "brier": [
-      0.04964076433934498,
-      0.1344618069311706
+      0.04305967139788914,
+      0.1228294493274491
     ],
     "log_loss": [
-      0.16212267322955534,
-      0.4188546516724025
+      0.15098247784601188,
+      0.36486365197976545
     ],
     "calibration_intercept": [
-      -2.2162444804260737,
-      -0.11916977551727344
+      -2.1640225158532105,
+      0.2051271093225306
     ],
     "calibration_slope": [
-      0.2705011711938495,
-      0.9552803368011826
+      0.4085294205056554,
+      1.1840318566821129
     ]
   },
   "validation_dataset_sha256": "dcaa52b1f295fad16749c7ede843b96c741f0c911b6838d4db568a4d82a4921f",
-  "note": "Group 2 was evaluated once after model freezing; no Group 2 tuning or recalibration was performed."
+  "note": "The corrected model was frozen before this evaluation, and no Group 2 fitting, tuning, feature selection, threshold selection, or recalibration was performed. However, Group 2 had already been used to evaluate the superseded web prototype, so this is not a first-use untouched validation exercise."
 }

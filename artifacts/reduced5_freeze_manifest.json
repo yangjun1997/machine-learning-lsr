@@ -1,21 +1,21 @@
 {
   "dataset_sha256": "dcaa52b1f295fad16749c7ede843b96c741f0c911b6838d4db568a4d82a4921f",
-  "model_sha256": "897f2d98f49eceddaf664ea599055dda0b7279d10b7182ae5021c5651c469e61",
-  "selected_model": "hist_gradient_boosting",
+  "model_sha256": "902f0d7e20451b356d6fe57dde79f8bf17d210223ca9fd1af15523c4d8521ee4",
+  "selected_model": "gradient_boosting",
   "feature_schema": {
     "name": "reduced5",
     "columns": [
+      "age",
       "duration",
-      "botox",
       "acupuncture",
       "zyg_lsr",
       "man_lsr"
     ],
     "numeric": [
+      "age",
       "duration"
     ],
     "categorical": [
-      "botox",
       "acupuncture",
       "zyg_lsr",
       "man_lsr"
@@ -25,8 +25,9 @@
   "development_rows": 476,
   "development_events": 58,
   "validation_locked": true,
-  "candidate_pool": "core sklearn candidates; optional boosting adapters excluded for portable deployment",
-  "training_note": "The reduced estimator was selected and refit on Group 1; Group 2 was not used for fitting or tuning.",
+  "candidate_pool": "fixed gradient_boosting specification used by the 12-predictor index model",
+  "training_note": "The five SHAP-ranked predictors and Gradient Boosting specification were fixed from Group 1, then the estimator was refit on Group 1. Group 2 was not used for fitting, tuning, feature selection, threshold selection, or recalibration.",
+  "group2_reuse_disclosure": "Group 2 had already been used to evaluate the superseded web prototype before this corrected model was frozen.",
   "validation_dataset_sha256": "dcaa52b1f295fad16749c7ede843b96c741f0c911b6838d4db568a4d82a4921f",
   "validation_rows": 104,
   "validation_events": 9

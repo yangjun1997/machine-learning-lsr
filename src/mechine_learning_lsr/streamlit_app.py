@@ -34,8 +34,10 @@ def main() -> None:
         st.stop()
 
     with st.form("reduced5_prediction"):
+        age = st.number_input(
+            "Age (years)", min_value=18.0, max_value=120.0, value=52.0, step=1.0, format="%.0f"
+        )
         duration = st.number_input("Disease duration (years)", min_value=0.0, value=3.0, step=0.1, format="%.2f")
-        botox = st.selectbox("Prior botulinum toxin treatment", options=(0, 1), format_func=BINARY_LABELS.__getitem__)
         acupuncture = st.selectbox("Prior acupuncture treatment", options=(0, 1), format_func=BINARY_LABELS.__getitem__)
         zyg_lsr = st.selectbox("Zygomatic branch LSR", options=(1, 2, 3), format_func=LSR_LABELS.__getitem__)
         man_lsr = st.selectbox("Mandibular branch LSR", options=(1, 2, 3), format_func=LSR_LABELS.__getitem__)
@@ -43,8 +45,8 @@ def main() -> None:
 
     if submitted:
         values = {
+            "age": age,
             "duration": duration,
-            "botox": botox,
             "acupuncture": acupuncture,
             "zyg_lsr": zyg_lsr,
             "man_lsr": man_lsr,

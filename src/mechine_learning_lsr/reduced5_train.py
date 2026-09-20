@@ -29,6 +29,7 @@ def train_reduced5() -> dict:
         feature_set,
         seed=SEED,
         include_optional=False,
+        candidate_names={"gradient_boosting"},
     )
     selected = next(
         candidate
@@ -55,8 +56,9 @@ def train_reduced5() -> dict:
         "development_rows": len(development),
         "development_events": int(y.sum()),
         "seed": SEED,
-        "candidate_pool": "core sklearn candidates; optional boosting adapters excluded for portable deployment",
-        "selection_rule": "lowest out-of-fold Brier score, then log-loss",
+        "candidate_pool": "fixed gradient_boosting specification used by the 12-predictor index model",
+        "selection_rule": "No reduced-model candidate reselection; gradient_boosting was fixed in advance.",
+        "feature_selection": "Five highest-ranked source variables from the Group 1 SHAP analysis.",
         "candidates": candidates_report,
     }
     manifest = {
@@ -67,8 +69,9 @@ def train_reduced5() -> dict:
         "development_rows": len(development),
         "development_events": int(y.sum()),
         "validation_locked": False,
-        "candidate_pool": "core sklearn candidates; optional boosting adapters excluded for portable deployment",
-        "training_note": "The reduced estimator was selected and refit on Group 1; Group 2 was not used for fitting or tuning.",
+        "candidate_pool": "fixed gradient_boosting specification used by the 12-predictor index model",
+        "training_note": "The five SHAP-ranked predictors and Gradient Boosting specification were fixed from Group 1, then the estimator was refit on Group 1. Group 2 was not used for fitting, tuning, feature selection, threshold selection, or recalibration.",
+        "group2_reuse_disclosure": "Group 2 had already been used to evaluate the superseded web prototype before this corrected model was frozen.",
     }
     REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
